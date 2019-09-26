@@ -8,11 +8,19 @@
 
 typedef struct Player Player;
 
-void Player__init(Player* this, int x, int y, char symbol);
-Player* Player__create(int x, int y, char symbol);
-void Player__input(Player* this, int input, int floor);
+void Player__init(struct Player* this, int x, int y, char symbol, int color);
+Player* Player__create(int x, int y, char symbol, int color);
 void Player__physics(Player *this, int floor);
+void Player__input(Player* this, int input, int floor);
+void Player__draw(Player *player);
 void Player__destroy(Player* this);
+
+static const char Player__graphics[3][3] =
+{
+	' ', '0', ' ',
+	'-', '|', '-',
+	'/', ' ', '\\'
+};
 
 struct Player
 {
@@ -29,9 +37,12 @@ struct Player
 	char symbol;
 	float jumpPower;
 
-	void (*init)(Player* this, int x, int y, char symbol);
+	int color;
+
+	void (*init)(Player* this, int x, int y, char symbol, int color);
 	void (*input)(Player* this, int input, int floor);
 	void (*physics)(Player *this, int floor);
+	void (*draw)(Player *this);
 	void (*destroy)(Player* this);
 };
 

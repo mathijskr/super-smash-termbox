@@ -30,8 +30,12 @@ int main(int argv, char **argc)
 	tb_select_output_mode(TB_OUTPUT_NORMAL);
 	tb_clear();
 
-	Player *player;
-	player = Player__create(10, 10, '!');
+	Player *player_1;
+	player_1 = Player__create(10, 10, '!', TB_BLACK);
+
+	Player *player_2;
+	player_2 = Player__create(20, 10, '!', TB_WHITE);
+
 
 	struct tb_event ev;
 
@@ -46,12 +50,18 @@ int main(int argv, char **argc)
 		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
 
 		/* Send input to player. */
-		player->input(player, ev.key, floor);
+		player_1->input(player_1, ev.key, floor);
 
-		player->physics(player, floor);
+		player_1->physics(player_1, floor);
 
-		/* Change player position. */
-		tb_change_cell(player->x, player->y, player->symbol, TB_RED, BACKGROUND_COLOR);
+		player_1->draw(player_1);
+
+		/* Send input to player. */
+		player_2->input(player_2, ev.key, floor);
+
+		player_2->physics(player_2, floor);
+
+		player_2->draw(player_2);
 
 		/* Draw to screen. */
 		tb_present();
@@ -60,7 +70,9 @@ int main(int argv, char **argc)
 		tb_peek_event(&ev, 100);
 	}
 
-	player->destroy(player);
+	player_1->destroy(player_1);
+	player_2->destroy(player_2);
+
 
 	tb_shutdown();
 	return 0;
