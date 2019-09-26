@@ -4,7 +4,7 @@
 void drawBackground(int width, int heigth, int color)
 {
 	for(int y = 0; y < heigth; y++)
-		for(int x = 0; x < heigth; x++)
+		for(int x = 0; x < width; x++)
 			tb_change_cell(x, y, ' ', TB_DEFAULT, BACKGROUND_COLOR);
 }
 
@@ -25,7 +25,7 @@ int main(int argv, char **argc)
 	tb_clear();
 
 	Player *player;
-	player = Player__create(10, 10, '@');
+	player = Player__create(10, 10, '!');
 
 	struct tb_event ev;
 
@@ -34,15 +34,23 @@ int main(int argv, char **argc)
 	{
 		tb_clear();
 
-		drawBackground(SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR);
+		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
 
-		player->input(player, ev.key);
+		int floor = tb_height() - 10.0f;
 
+		/* Send input to player. */
+		player->input(player, ev.key, floor);
+
+		player->physics(player, floor);
+
+		/* Change player position. */
 		tb_change_cell(player->x, player->y, player->symbol, TB_RED, BACKGROUND_COLOR);
 
+		/* Draw to screen. */
 		tb_present();
 
-		tb_poll_event(&ev);
+		/* Update input with a timeout of n ms. */
+		tb_peek_event(&ev, 100);
 	}
 
 	player->destroy(player);
