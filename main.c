@@ -1,12 +1,6 @@
-#include <stdio.h>
-#include <string.h>
+#include "main.h"
 
-#include "termbox.h"
-
-#define BACKGROUND_COLOR TB_GREEN
-#define SCREEN_HEIGHT 200
-#define SCREEN_WIDTH 200
-
+/* Make te background a constant color. */
 void drawBackground(int width, int heigth, int color)
 {
 	for(int y = 0; y < heigth; y++)
@@ -17,8 +11,6 @@ void drawBackground(int width, int heigth, int color)
 
 int main(int argv, char **argc)
 {
-	(void)argc; (void)argv;
-
 	int code = tb_init();
 
 	/* Check if termbox was initialized. */
@@ -32,7 +24,8 @@ int main(int argv, char **argc)
 	tb_select_output_mode(TB_OUTPUT_NORMAL);
 	tb_clear();
 
-	int x = 100, y = 10;
+	Player *player;
+	player = Player__create(10, 10, '@');
 
 	struct tb_event ev;
 
@@ -43,15 +36,16 @@ int main(int argv, char **argc)
 
 		drawBackground(SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR);
 
-		if(ev.key == TB_KEY_ARROW_LEFT)
-			x--;
+		player->input(player, ev.key);
 
-		tb_poll_event(&ev);
-
-		tb_change_cell(x, y, '*', TB_RED, BACKGROUND_COLOR);
+		tb_change_cell(player->x, player->y, player->symbol, TB_RED, BACKGROUND_COLOR);
 
 		tb_present();
+
+		tb_poll_event(&ev);
 	}
+
+	player->destroy(player);
 
 	tb_shutdown();
 	return 0;
