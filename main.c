@@ -8,6 +8,12 @@ void drawBackground(int width, int heigth, int color)
 			tb_change_cell(x, y, ' ', TB_DEFAULT, BACKGROUND_COLOR);
 }
 
+void drawGround(int width, int height, int maxHeight, char symbol, int color)
+{
+	for(int y = height; y < maxHeight; y++)
+		for(int x = 0; x < width; x++)
+			tb_change_cell(x, y, symbol, TB_DEFAULT, GROUND_COLOR);
+}
 
 int main(int argv, char **argc)
 {
@@ -34,9 +40,10 @@ int main(int argv, char **argc)
 	{
 		tb_clear();
 
-		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
-
 		int floor = tb_height() - 10.0f;
+
+		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
+		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
 
 		/* Send input to player. */
 		player->input(player, ev.key, floor);

@@ -7,3 +7,5 @@
 #include "constants.h"
 
 void drawBackground(int width, int heigth, int color);
+void drawGround(int width, int height, int maxHeight, char symbol, int color);
+
