@@ -1,5 +1,5 @@
-CC=tcc 
-IN=main.c player.c ../termbox/src/termbox.c ../termbox/src/utf8.c
+CC=tcc
+IN=main.c player.c bullet.c ../termbox/src/termbox.c ../termbox/src/utf8.c
 OUT=main
 INCLUDE=../termbox/src/
 

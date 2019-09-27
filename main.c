@@ -15,6 +15,60 @@ void drawGround(int width, int height, int maxHeight, char symbol, int color)
 			tb_change_cell(x, y, symbol, TB_DEFAULT, GROUND_COLOR);
 }
 
+void input(struct tb_event *ev, Player *(*players), int floor)
+{
+	Player *player_1 = players[0];
+	Player *player_2 = players[1];
+
+	switch(ev->key)
+	{
+		case PLAYER_2_LEFT:
+		{
+			player_2->moveLeft(player_2);
+			break;
+		}
+		case PLAYER_2_RIGHT:
+		{
+			player_2->moveRight(player_2);
+			break;
+		}
+		case PLAYER_2_JUMP:
+		{
+			player_2->jump(player_2, floor);
+			break;
+		}
+		case PLAYER_2_SHOOT:
+		{
+			player_2->shoot(player_2);
+			break;
+		}
+	}
+
+	switch(ev->ch)
+	{
+		case PLAYER_1_LEFT:
+		{
+			player_1->moveLeft(player_1);
+			break;
+		}
+		case PLAYER_1_RIGHT:
+		{
+			player_1->moveRight(player_1);
+			break;
+		}
+		case PLAYER_1_JUMP:
+		{
+			player_1->jump(player_1, floor);
+			break;
+		}
+		case PLAYER_1_SHOOT:
+		{
+			player_1->shoot(player_1);
+			break;
+		}
+	}
+}
+
 int main(int argv, char **argc)
 {
 	int code = tb_init();
@@ -30,11 +84,16 @@ int main(int argv, char **argc)
 	tb_select_output_mode(TB_OUTPUT_NORMAL);
 	tb_clear();
 
+	Player *players[2];
+
 	Player *player_1;
 	player_1 = Player__create(10, 10, '!', TB_BLACK);
 
 	Player *player_2;
 	player_2 = Player__create(20, 10, '!', TB_WHITE);
+
+	players[0] = player_1;
+	players[1] = player_2;
 
 	struct tb_event ev;
 
@@ -48,46 +107,7 @@ int main(int argv, char **argc)
 		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
 		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
 
-		/* INPUT. */
-		switch(ev.key)
-		{
-			case TB_KEY_ARROW_LEFT:
-			{
-				player_2->moveLeft(player_2);
-				break;
-			}
-
-			case TB_KEY_ARROW_RIGHT:
-			{
-				player_2->moveRight(player_2);
-				break;
-			}
-
-			case TB_KEY_SPACE:
-			{
-				player_2->jump(player_2, floor);
-				break;
-			}
-		}
-
-		switch(ev.ch)
-		{
-			case 'a':
-			{
-				player_1->moveLeft(player_1);
-				break;
-			}
-			case 'd':
-			{
-				player_1->moveRight(player_1);
-				break;
-			}
-			case 'q':
-			{
-				player_1->jump(player_1, floor);
-				break;
-			}
-		}
+		input(&ev, players, floor);
 
 		player_1->physics(player_1, floor);
 		player_1->draw(player_1);
@@ -104,7 +124,6 @@ int main(int argv, char **argc)
 
 	player_1->destroy(player_1);
 	player_2->destroy(player_2);
-
 
 	tb_shutdown();
 	return 0;

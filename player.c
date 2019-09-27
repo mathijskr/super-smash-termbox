@@ -1,7 +1,7 @@
 #include "player.h"
 
 /* Initialize player. */
-void Player__init(struct Player* this, int x, int y, char symbol, int color)
+void Player__init(Player *this, int x, int y, char symbol, int color)
 {
 	this->x = x;
 	this->y = y;
@@ -12,11 +12,13 @@ void Player__init(struct Player* this, int x, int y, char symbol, int color)
 	this->ax = 0.0f;
 	this->ay = 0.0f;
 
+	this->direction = DIRECTION_RIGHT;
+
 	this->symbol = symbol;
 
-	this->jumpPower = 3.0f;
-
 	this->color = color;
+
+	this->bullet = Bullet__create('@', this->color);
 }
 
 /* Construct a new player. */
@@ -31,6 +33,7 @@ Player* Player__create(int x, int y, char symbol, int color)
 	result->moveRight = Player__moveRight;
 	result->jump = Player__jump;
 	result->physics = Player__physics;
+	result->shoot = Player__shoot;
 	result->draw = Player__draw;
 	result->destroy = Player__destroy;
 
@@ -61,22 +64,36 @@ void Player__physics(Player *this, int floor)
 
 		this->y = floor;
 	}
+
+	if(this->bullet->exists == true)
+	{
+		this->bullet->update(this->bullet);
+		this->bullet->draw(this->bullet);
+	}
 }
 
 void Player__moveLeft(Player *this)
 {
 	this->x--;
+	this->direction = DIRECTION_LEFT;
 }
 
 void Player__moveRight(Player *this)
 {
 	this->x++;
+	this->direction = DIRECTION_RIGHT;
 }
 
 void Player__jump(Player *this, int floor)
 {
 	if(this->y >= floor - 0.001f)
-		this->vy -= this->jumpPower;
+		this->vy -= JUMP_POWER;
+}
+
+void Player__shoot(Player *this)
+{
+	if(this->bullet->exists == false)
+		this->bullet->shoot(this->bullet, this->x, this->y, this->direction);
 }
 
 void Player__draw(Player *this)

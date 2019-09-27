@@ -8,4 +8,4 @@
 
 void drawBackground(int width, int heigth, int color);
 void drawGround(int width, int height, int maxHeight, char symbol, int color);
-
+void input(struct tb_event *ev, Player *(*players), int floor);
