@@ -6,7 +6,7 @@
 #define BACKGROUND_COLOR TB_GREEN
 #define GROUND_COLOR TB_BLUE
 
-#define GRAVITY 0.4f
+#define GRAVITY 0.01f
 
 #define DIRECTION_LEFT -1;
 #define DIRECTION_RIGHT 1;

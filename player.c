@@ -3,6 +3,11 @@
 /* Initialize player. */
 void Player__init(Player *this, int x, int y, char symbol, int color)
 {
+	this->dead = false;
+
+	this->size_x = PLAYER_SIZE_X;
+	this->size_y = PLAYER_SIZE_Y;
+
 	this->x = x;
 	this->y = y;
 
@@ -98,9 +103,14 @@ void Player__shoot(Player *this)
 
 void Player__draw(Player *this)
 {
-	for(int i = 0; i < 3; i++)
-		for(int j = 0; j < 3; j++)
-			tb_change_cell(this->x + j, this->y + i, Player__graphics[i][j], this->color, BACKGROUND_COLOR);
+	if(!this->dead)
+		for(int i = 0; i < 3; i++)
+			for(int j = 0; j < 3; j++)
+				tb_change_cell(this->x + j, this->y + i, Player__graphics[i][j], this->color, BACKGROUND_COLOR);
+	else
+		for(int i = 0; i < 3; i++)
+			for(int j = 0; j < 3; j++)
+				tb_change_cell(this->x + j, this->y + i, Player__graphics_dead[i][j], this->color, BACKGROUND_COLOR);
 }
 
 /* Destructor. */
@@ -108,4 +118,6 @@ void Player__destroy(Player* this)
 {
 	if(this)
 		free(this);
+	if(this->bullet)
+		this->bullet->destroy(this->bullet);
 }

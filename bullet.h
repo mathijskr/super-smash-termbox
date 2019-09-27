@@ -7,7 +7,7 @@
 #include "termbox.h"
 #include "constants.h"
 
-#define BULLET_SPEED 13.0f
+#define BULLET_SPEED 2.0f
 
 typedef struct Bullet Bullet;
 

@@ -17,7 +17,10 @@
 #define PLAYER_1_JUMP 'q'
 #define PLAYER_1_SHOOT 'e'
 
-#define JUMP_POWER 2.0f
+#define JUMP_POWER 0.5f
+
+#define PLAYER_SIZE_X 3.0f;
+#define PLAYER_SIZE_Y 3.0f;
 
 typedef struct Player Player;
 
@@ -39,13 +42,24 @@ static const char Player__graphics[3][3] =
 	'/', ' ', '\\'
 };
 
+static const char Player__graphics_dead[3][3] =
+{
+	'\\', ' ', '/',
+	' ', 'X', ' ',
+	'/', ' ', '\\'
+};
+
 struct Player
 {
+	bool dead;
+
 	/* X position, speed, acceleration. */
 	float x, vx, ax;
 
 	/* Y position, speed, acceleration. */
 	float y, vy, ay;
+
+	float size_x, size_y;
 
 	int direction;
 
