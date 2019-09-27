@@ -27,7 +27,9 @@ Player* Player__create(int x, int y, char symbol, int color)
 
 	/* Set function pointers. */
 	result->init = Player__init;
-	result->input = Player__input;
+	result->moveLeft = Player__moveLeft;
+	result->moveRight = Player__moveRight;
+	result->jump = Player__jump;
 	result->physics = Player__physics;
 	result->draw = Player__draw;
 	result->destroy = Player__destroy;
@@ -61,16 +63,19 @@ void Player__physics(Player *this, int floor)
 	}
 }
 
-/* Process player input. */
-void Player__input(Player *this, int input, int floor)
+void Player__moveLeft(Player *this)
 {
-	if(input == TB_KEY_ARROW_LEFT)
-		this->x--;
+	this->x--;
+}
 
-	if(input == TB_KEY_ARROW_RIGHT)
-		this->x++;
+void Player__moveRight(Player *this)
+{
+	this->x++;
+}
 
-	if(input == TB_KEY_SPACE && this->y >= floor - 0.001f)
+void Player__jump(Player *this, int floor)
+{
+	if(this->y >= floor - 0.001f)
 		this->vy -= this->jumpPower;
 }
 

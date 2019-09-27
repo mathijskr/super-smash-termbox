@@ -36,7 +36,6 @@ int main(int argv, char **argc)
 	Player *player_2;
 	player_2 = Player__create(20, 10, '!', TB_WHITE);
 
-
 	struct tb_event ev;
 
 	/* Quit loop if player presses escape key. */
@@ -49,18 +48,51 @@ int main(int argv, char **argc)
 		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
 		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
 
-		/* Send input to player. */
-		player_1->input(player_1, ev.key, floor);
+		/* INPUT. */
+		switch(ev.key)
+		{
+			case TB_KEY_ARROW_LEFT:
+			{
+				player_2->moveLeft(player_2);
+				break;
+			}
+
+			case TB_KEY_ARROW_RIGHT:
+			{
+				player_2->moveRight(player_2);
+				break;
+			}
+
+			case TB_KEY_SPACE:
+			{
+				player_2->jump(player_2, floor);
+				break;
+			}
+		}
+
+		switch(ev.ch)
+		{
+			case 'a':
+			{
+				player_1->moveLeft(player_1);
+				break;
+			}
+			case 'd':
+			{
+				player_1->moveRight(player_1);
+				break;
+			}
+			case 'q':
+			{
+				player_1->jump(player_1, floor);
+				break;
+			}
+		}
 
 		player_1->physics(player_1, floor);
-
 		player_1->draw(player_1);
 
-		/* Send input to player. */
-		player_2->input(player_2, ev.key, floor);
-
 		player_2->physics(player_2, floor);
-
 		player_2->draw(player_2);
 
 		/* Draw to screen. */
