@@ -7,20 +7,26 @@
 #include "constants.h"
 #include "bullet.h"
 
-#define PLAYER_2_LEFT TB_KEY_ARROW_LEFT
-#define PLAYER_2_RIGHT TB_KEY_ARROW_RIGHT
-#define PLAYER_2_JUMP TB_KEY_SPACE
-#define PLAYER_2_SHOOT TB_KEY_ENTER
+#define PLAYER_1 0
+#define PLAYER_2 1
 
-#define PLAYER_1_LEFT 'a'
-#define PLAYER_1_RIGHT 'd'
-#define PLAYER_1_JUMP 'q'
-#define PLAYER_1_SHOOT 'e'
+#define PLAYER_1_LEFT TB_KEY_ARROW_LEFT
+#define PLAYER_1_RIGHT TB_KEY_ARROW_RIGHT
+#define PLAYER_1_JUMP TB_KEY_SPACE
+#define PLAYER_1_SHOOT TB_KEY_ENTER
+
+#define PLAYER_2_LEFT 'a'
+#define PLAYER_2_RIGHT 'd'
+#define PLAYER_2_JUMP 'q'
+#define PLAYER_2_SHOOT 'e'
 
 #define JUMP_POWER 0.5f
 
-#define PLAYER_SIZE_X 3.0f;
-#define PLAYER_SIZE_Y 3.0f;
+#define PLAYER_SIZE_X 3.0f
+#define PLAYER_SIZE_Y 6.0f
+
+#define PLAYER_START_X 10
+#define PLAYER_START_Y 10
 
 typedef struct Player Player;
 

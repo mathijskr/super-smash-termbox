@@ -15,18 +15,14 @@ int main(int argv, char **argc)
 	tb_select_output_mode(TB_OUTPUT_NORMAL);
 	tb_clear();
 
-	Player *players[2];
-
-	Player *player_1;
-	player_1 = Player__create(10, 10, '!', TB_BLACK);
-
-	Player *player_2;
-	player_2 = Player__create(tb_width() - 10, 10, '!', TB_RED);
-
-	players[0] = player_1;
-	players[1] = player_2;
+	/* Create new players. */
+	Player *players[NUMBER_OF_PLAYERS];
+	players[PLAYER_1] = Player__create(tb_width() - PLAYER_START_X, PLAYER_START_Y, '!', TB_RED);
+	players[PLAYER_2] = Player__create(PLAYER_START_X, PLAYER_START_Y, '!', TB_BLACK);
 
 	struct tb_event ev;
+
+	int victory = -1;
 
 	/* Quit loop if player presses escape key. */
 	while(ev.key != TB_KEY_ESC)
@@ -38,19 +34,30 @@ int main(int argv, char **argc)
 		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
 		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
 
+		if(victory != -1)
+			drawVictory(victory);
+
+		/* Handle input. */
 		input(&ev, players, floor);
 
-		player_1->physics(player_1, floor);
-		player_1->draw(player_1);
-
-		player_2->physics(player_2, floor);
-		player_2->draw(player_2);
+		/* Update and draw all players. */
+		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+		{
+			players[i]->physics(players[i], floor);
+			players[i]->draw(players[i]);
+		}
 
 		/* Check if bullets hit players. */
-		if(checkCollision(player_1, player_2->bullet))
-			player_1->dead = true;
-		if(checkCollision(player_2, player_1->bullet))
-			player_2->dead = true;
+		if(checkCollision(players[PLAYER_1], players[PLAYER_2]->bullet))
+		{
+			players[PLAYER_1]->dead = true;
+			victory = PLAYER_1;
+		}
+		if(checkCollision(players[PLAYER_2], players[PLAYER_1]->bullet))
+		{
+			players[PLAYER_2]->dead = true;
+			victory = PLAYER_2;
+		}
 
 		/* Draw to screen. */
 		tb_present();
@@ -65,8 +72,9 @@ int main(int argv, char **argc)
 		tb_peek_event(&ev, 0);
 	}
 
-	player_1->destroy(player_1);
-	player_2->destroy(player_2);
+	/* Clean up. */
+	players[0]->destroy(players[0]);
+	players[1]->destroy(players[1]);
 
 	tb_shutdown();
 	return 0;
@@ -89,58 +97,59 @@ void drawGround(int width, int height, int maxHeight, char symbol, int color)
 
 void input(struct tb_event *ev, Player *(*players), int floor)
 {
-	Player *player_1 = players[0];
-	Player *player_2 = players[1];
-
-	if(!player_2->dead)
+	if(!players[PLAYER_1]->dead)
 	{
 		switch(ev->key)
 		{
-			case PLAYER_2_LEFT:
+			case PLAYER_1_LEFT:
 			{
-				player_2->moveLeft(player_2);
+				if(players[PLAYER_1]->x > 0)
+					players[PLAYER_1]->moveLeft(players[PLAYER_1]);
 				break;
 			}
-			case PLAYER_2_RIGHT:
+			case PLAYER_1_RIGHT:
 			{
-				player_2->moveRight(player_2);
+				if(players[PLAYER_1]->x < tb_width() - PLAYER_SIZE_X)
+					players[PLAYER_1]->moveRight(players[PLAYER_1]);
 				break;
 			}
-			case PLAYER_2_JUMP:
+			case PLAYER_1_JUMP:
 			{
-				player_2->jump(player_2, floor);
+				players[PLAYER_1]->jump(players[PLAYER_1], floor);
 				break;
 			}
-			case PLAYER_2_SHOOT:
+			case PLAYER_1_SHOOT:
 			{
-				player_2->shoot(player_2);
+				players[PLAYER_1]->shoot(players[PLAYER_1]);
 				break;
 			}
 		}
 	}
 
-	if(!player_1->dead)
+	if(!players[PLAYER_2]->dead)
 	{
 		switch(ev->ch)
 		{
-			case PLAYER_1_LEFT:
+			case PLAYER_2_LEFT:
 			{
-				player_1->moveLeft(player_1);
+				if(players[PLAYER_2]->x > 0)
+					players[PLAYER_2]->moveLeft(players[PLAYER_2]);
 				break;
 			}
-			case PLAYER_1_RIGHT:
+			case PLAYER_2_RIGHT:
 			{
-				player_1->moveRight(player_1);
+				if(players[PLAYER_2]->x < tb_width() - PLAYER_SIZE_X)
+					players[PLAYER_2]->moveRight(players[PLAYER_2]);
 				break;
 			}
-			case PLAYER_1_JUMP:
+			case PLAYER_2_JUMP:
 			{
-				player_1->jump(player_1, floor);
+				players[PLAYER_2]->jump(players[PLAYER_2], floor);
 				break;
 			}
-			case PLAYER_1_SHOOT:
+			case PLAYER_2_SHOOT:
 			{
-				player_1->shoot(player_1);
+				players[PLAYER_2]->shoot(players[PLAYER_2]);
 				break;
 			}
 		}
@@ -154,4 +163,27 @@ bool checkCollision(Player *player, Bullet *bullet)
 			return true;
 
 	return false;
+}
+
+void drawVictory(int victory)
+{
+	int playerStringLength = 9;
+	int totalLength = playerStringLength + 4;
+
+	int x = tb_width() / 2.0f - totalLength / 2.0f;
+	int y = 10;
+
+	if(victory == PLAYER_1)
+		drawString("Player 1 ", playerStringLength, x, y);
+
+	if(victory == PLAYER_2)
+		drawString("Player 2 ", playerStringLength, x, y);
+
+	drawString("won!", 4, x + playerStringLength, y);
+}
+
+void drawString(char *string, int length, int x, int y)
+{
+	for(int i = 0; i < length; i++)
+		tb_change_cell(x + i, y, string[i], TB_BLACK, TB_WHITE);
 }
