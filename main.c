@@ -17,8 +17,13 @@ int main(int argv, char **argc)
 
 	/* Create new players. */
 	Player *players[NUMBER_OF_PLAYERS];
-	players[PLAYER_1] = Player__create(tb_width() - PLAYER_START_X, PLAYER_START_Y, '!', TB_RED);
-	players[PLAYER_2] = Player__create(PLAYER_START_X, PLAYER_START_Y, '!', TB_BLACK);
+	players[PLAYER_1] = Player__create(tb_width() - PLAYER_START_X, PLAYER_START_Y, TB_RED);
+	players[PLAYER_2] = Player__create(PLAYER_START_X, PLAYER_START_Y, TB_BLACK);
+
+	/* Needed for nanosleep. */
+	struct timespec tim, tim2;
+	tim.tv_sec = 0;
+	tim.tv_nsec = 10000000L;
 
 	struct tb_event ev;
 
@@ -31,8 +36,11 @@ int main(int argv, char **argc)
 
 		int floor = tb_height() - 10.0f;
 
-		drawBackground(tb_width(), tb_height(), BACKGROUND_COLOR);
-		drawGround(tb_width(), floor + 1, tb_height(), '~', GROUND_COLOR);
+		/* Draw background. */
+		drawRectangle(0, tb_width(), 0, floor, BACKGROUND_COLOR, BACKGROUND_SYMBOL, BACKGROUND_COLOR);
+
+		/* Draw ground. */
+		drawRectangle(0, tb_width(), floor, tb_height(), GROUND_COLOR, GROUND_SYMBOL, TB_DEFAULT);
 
 		if(victory != -1)
 			drawVictory(victory);
@@ -63,9 +71,6 @@ int main(int argv, char **argc)
 		tb_present();
 
 		/* Sleep for 10 ms. */
-		struct timespec tim, tim2;
-		tim.tv_sec = 0;
-		tim.tv_nsec = 10000000L;
 		nanosleep(&tim, &tim2);
 
 		/* Update input with a timeout of n ms. */
@@ -80,19 +85,11 @@ int main(int argv, char **argc)
 	return 0;
 }
 
-/* Make the background a constant color. */
-void drawBackground(int width, int heigth, int color)
-{
-	for(int y = 0; y < heigth; y++)
-		for(int x = 0; x < width; x++)
-			tb_change_cell(x, y, ' ', TB_DEFAULT, BACKGROUND_COLOR);
-}
-
-void drawGround(int width, int height, int maxHeight, char symbol, int color)
+void drawRectangle(int width, int maxWidth, int height, int maxHeight, int backColor, char symbol, int symbolColor)
 {
 	for(int y = height; y < maxHeight; y++)
-		for(int x = 0; x < width; x++)
-			tb_change_cell(x, y, symbol, TB_DEFAULT, GROUND_COLOR);
+		for(int x = width; x < maxWidth; x++)
+			tb_change_cell(x, y, symbol, symbolColor, backColor);
 }
 
 void input(struct tb_event *ev, Player *(*players), int floor)

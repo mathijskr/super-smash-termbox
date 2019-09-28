@@ -30,16 +30,26 @@
 
 typedef struct Player Player;
 
-void Player__init(struct Player* this, int x, int y, char symbol, int color);
-Player* Player__create(int x, int y, char symbol, int color);
+/* Set the player's position, and it's color. */
+void Player__init(struct Player* this, int x, int y, int color);
+
+/* Allocate memory for the player and let the function pointers point to the correct functions. */
+Player* Player__create(int x, int y, int color);
+
+/* Calculate the player's new position, speed and acceleration. And update the player's bullet. */
 void Player__physics(Player *this, int floor);
+
 void Player__moveLeft(Player *this);
 void Player__moveRight(Player *this);
+
+/* Increase a player's y velocity by JUMP_POWER. */
 void Player__jump(Player *this, int floor);
+
 void Player__draw(Player *player);
+
+/* Shoot a bullet, if a previous bullet is out of bounds. */
 void Player__shoot(Player *this);
 void Player__destroy(Player* this);
-
 
 static const char Player__graphics[3][3] =
 {
@@ -79,7 +89,7 @@ struct Player
 
 	Bullet *bullet;
 
-	void (*init)(Player* this, int x, int y, char symbol, int color);
+	void (*init)(Player* this, int x, int y, int color);
 	void (*physics)(Player *this, int floor);
 	void (*moveLeft)(Player *this);
 	void (*moveRight)(Player *this);

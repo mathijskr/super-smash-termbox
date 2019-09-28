@@ -1,7 +1,7 @@
 #include "player.h"
 
 /* Initialize player. */
-void Player__init(Player *this, int x, int y, char symbol, int color)
+void Player__init(Player *this, int x, int y, int color)
 {
 	this->dead = false;
 
@@ -19,15 +19,13 @@ void Player__init(Player *this, int x, int y, char symbol, int color)
 
 	this->direction = DIRECTION_RIGHT;
 
-	this->symbol = symbol;
-
 	this->color = color;
 
 	this->bullet = Bullet__create('@', this->color);
 }
 
 /* Construct a new player. */
-Player* Player__create(int x, int y, char symbol, int color)
+Player* Player__create(int x, int y, int color)
 {
 	/* Allocate memory. */
 	struct Player* result = (struct Player*) malloc(sizeof(struct Player));
@@ -43,7 +41,7 @@ Player* Player__create(int x, int y, char symbol, int color)
 	result->destroy = Player__destroy;
 
 	/* Initialize a new player. */
-	result->init(result, x, y, symbol, color);
+	result->init(result, x, y, color);
 
 	return result;
 }
