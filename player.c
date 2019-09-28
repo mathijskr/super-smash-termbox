@@ -5,9 +5,6 @@ void Player__init(Player *this, int x, int y, int color)
 {
 	this->dead = false;
 
-	this->size_x = PLAYER_SIZE_X;
-	this->size_y = PLAYER_SIZE_Y;
-
 	this->x = x;
 	this->y = y;
 
@@ -77,13 +74,13 @@ void Player__physics(Player *this, int floor)
 
 void Player__moveLeft(Player *this)
 {
-	this->x--;
+	this->x -= PLAYER_MOVEMENT_SPEED;
 	this->direction = DIRECTION_LEFT;
 }
 
 void Player__moveRight(Player *this)
 {
-	this->x++;
+	this->x += PLAYER_MOVEMENT_SPEED;
 	this->direction = DIRECTION_RIGHT;
 }
 

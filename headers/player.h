@@ -21,6 +21,7 @@
 #define PLAYER_2_SHOOT 'e'
 
 #define JUMP_POWER 0.5f
+#define PLAYER_MOVEMENT_SPEED 3.0f
 
 #define PLAYER_SIZE_X 3.0f
 #define PLAYER_SIZE_Y 6.0f
@@ -74,8 +75,6 @@ struct Player
 
 	/* Y position, speed, acceleration. */
 	float y, vy, ay;
-
-	float size_x, size_y;
 
 	int direction;
 

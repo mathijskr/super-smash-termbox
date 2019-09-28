@@ -59,50 +59,30 @@ int main(int argv, char **argc)
 		if(menuOpen)
 		{
 			menuAction = inputMenu(&ev);
+			selectedItem = moveMenuCursor(menuAction, selectedItem);
 
-			switch(menuAction)
+			if(menuAction == MENU_SELECT)
 			{
-				case MENU_UP:
+				switch(selectedItem)
 				{
-					if(selectedItem == MENU_RESTART)
-						selectedItem = MENU_EXIT;
-					else
-						selectedItem++;
-					break;
-				}
-
-				case MENU_DOWN:
-				{
-					if(selectedItem == MENU_EXIT)
-						selectedItem = MENU_RESTART;
-					else
-						selectedItem--;
-					break;
-				}
-
-				case MENU_SELECT:
-				{
-					switch(selectedItem)
+					case MENU_EXIT: exitGame = true; break;
+					case MENU_RESTART:
 					{
-						case MENU_EXIT: exitGame = true; break;
-						case MENU_RESTART:
-						{
-							/* Close victory message. */
-							victory = -1;
+						/* Close victory message. */
+						victory = -1;
 
-							/* Revive players. */
-							for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
-								players[i]->dead = false;
+						/* Revive players. */
+						for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+							players[i]->dead = false;
 
-							/* Close menu. */
-							menuOpen = false;
+						/* Close menu. */
+						menuOpen = false;
 
-							/* Reset player positions. */
-							players[PLAYER_1]->x = tb_width() - PLAYER_START_X;
-							players[PLAYER_2]->x = PLAYER_START_X;
-							players[PLAYER_1]->y = PLAYER_START_Y;
-							players[PLAYER_2]->y = PLAYER_START_Y;
-						}
+						/* Reset player positions. */
+						players[PLAYER_1]->x = tb_width() - PLAYER_START_X;
+						players[PLAYER_2]->x = PLAYER_START_X;
+						players[PLAYER_1]->y = PLAYER_START_Y;
+						players[PLAYER_2]->y = PLAYER_START_Y;
 					}
 				}
 			}
@@ -241,8 +221,8 @@ bool input(struct tb_event *ev)
 
 bool checkCollision(Player *player, Bullet *bullet)
 {
-	if(bullet->x >= player->x - (player->size_x / 2.0f) && bullet->x <= player->x + (player->size_x / 2.0f))
-		if(bullet->y >= player->y - (player->size_y / 2.0f) && bullet->y <= player->y + player->size_y / 2.0f)
+	if(bullet->x >= player->x - (PLAYER_SIZE_X / 2.0f) && bullet->x <= player->x + (PLAYER_SIZE_X / 2.0f))
+		if(bullet->y >= player->y - (PLAYER_SIZE_Y / 2.0f) && bullet->y <= player->y + (PLAYER_SIZE_Y / 2.0f))
 			return true;
 
 	return false;
@@ -269,6 +249,32 @@ void drawString(char *string, int color, int length, int x, int y, int backColor
 {
 	for(int i = 0; i < length; i++)
 		tb_change_cell(x + i, y, string[i], color, backColor);
+}
+
+int moveMenuCursor(int menuAction, int selectedItem)
+{
+	switch(menuAction)
+	{
+		case MENU_UP:
+		{
+			if(selectedItem == MENU_RESTART)
+				selectedItem = MENU_EXIT;
+			else
+				selectedItem++;
+			break;
+		}
+
+		case MENU_DOWN:
+		{
+			if(selectedItem == MENU_EXIT)
+				selectedItem = MENU_RESTART;
+			else
+				selectedItem--;
+			break;
+		}
+	}
+
+	return selectedItem;
 }
 
 void drawMenu(int selectedItem)

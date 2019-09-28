@@ -29,8 +29,14 @@
 /* Draw a rectangle of size widht, heigth with that has color color and fill it with symbol symbol. */
 void drawRectangle(int width, int maxWidth, int height, int maxHeight, int backColor, char symbol, int symbolColor);
 
+/* Process the player's input in the menu UI, can return up, down or select,
+ * indicating wheter the player wants to move up or down in the menu, or wants to execute the higlighted action. */
 int inputMenu(struct tb_event *ev);
+
+/* Process the player's input in the game. */
 void inputPlayers(struct tb_event *ev, Player *(*players), int floor);
+
+/* Checks if the key bound to opening the menu is pressed. */
 bool input(struct tb_event *ev);
 
 /* Check if a bullet is inside the hitbox of a player. */
@@ -40,6 +46,10 @@ bool checkCollision(Player *player, Bullet *bullet);
  * Color specifies the text color, backColor specifies the color of the background behind the characters*/
 void drawString(char *string, int color, int length, int x, int y, int backColor);
 
+/* Move the cursor in the menu up or down so that a different action is selected. */
+int moveMenuCursor(int menuAction, int selectedItem);
+
+/* Draw a UI for the menu. */
 void drawMenu(int selectedItem);
 
 /* Draw a victory message for the corresponding player that won the game. */
