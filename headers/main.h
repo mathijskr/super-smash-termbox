@@ -8,8 +8,10 @@
 #include "player.h"
 #include "constants.h"
 #include "bullet.h"
+#include "stageobject.h"
 
 #define NUMBER_OF_PLAYERS 2
+#define NUMBER_OF_STAGE_OBJECTS 5
 
 #define BACKGROUND_SYMBOL ' '
 #define GROUND_SYMBOL '-'

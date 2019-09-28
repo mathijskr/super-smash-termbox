@@ -1,5 +1,5 @@
 CC=tcc
-IN=main.c player.c bullet.c ../termbox/src/termbox.c ../termbox/src/utf8.c
+IN=main.c player.c bullet.c stageobject.c ../termbox/src/termbox.c ../termbox/src/utf8.c
 OUT=main
 INCLUDE=-I ../termbox/src/ -I headers/
 

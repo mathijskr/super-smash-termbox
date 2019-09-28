@@ -45,10 +45,6 @@ Player* Player__create(int x, int y, int color)
 
 void Player__physics(Player *this, int floor)
 {
-	/* Let player fall down. */
-	if(this->y < floor)
-		this->ay = GRAVITY;
-
 	/* Increase or decrease speed. */
 	this->vx += this->ax;
 	this->vy += this->ay;
@@ -57,13 +53,17 @@ void Player__physics(Player *this, int floor)
 	this->x += this->vx;
 	this->y += this->vy;
 
-	if(this->y >= floor)
+	if(this->y >= floor - PLAYER_SIZE_Y / 2.0f)
 	{
 		this->vy = 0.0f;
 		this->ay = 0.0f;
 
-		this->y = floor;
+		this->y = floor - PLAYER_SIZE_Y / 2.0f;
 	}
+	/* Let player fall down. */
+	else
+		this->ay = GRAVITY;
+
 
 	if(this->bullet->exists == true)
 	{
@@ -86,7 +86,8 @@ void Player__moveRight(Player *this)
 
 void Player__jump(Player *this, int floor)
 {
-	if(this->y >= floor - 0.001f)
+	/* Check if player is standing still. */
+	if(this->vy <= 0.001f && this->vy >= -0.001f)
 		this->vy -= JUMP_POWER;
 }
 
