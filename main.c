@@ -29,8 +29,13 @@ int main(int argv, char **argc)
 
 	int victory = -1;
 
+	bool exitGame = false;
+	bool menuOpen = false;
+
+	int selectedItem = MENU_EXIT;
+
 	/* Quit loop if player presses escape key. */
-	while(ev.key != TB_KEY_ESC)
+	while(!exitGame)
 	{
 		tb_clear();
 
@@ -46,7 +51,67 @@ int main(int argv, char **argc)
 			drawVictory(victory);
 
 		/* Handle input. */
-		input(&ev, players, floor);
+		if(input(&ev))
+			menuOpen = !menuOpen;
+
+		int menuAction = -1;
+
+		if(menuOpen)
+		{
+			menuAction = inputMenu(&ev);
+
+			switch(menuAction)
+			{
+				case MENU_UP:
+				{
+					if(selectedItem == MENU_RESTART)
+						selectedItem = MENU_EXIT;
+					else
+						selectedItem++;
+					break;
+				}
+
+				case MENU_DOWN:
+				{
+					if(selectedItem == MENU_EXIT)
+						selectedItem = MENU_RESTART;
+					else
+						selectedItem--;
+					break;
+				}
+
+				case MENU_SELECT:
+				{
+					switch(selectedItem)
+					{
+						case MENU_EXIT: exitGame = true; break;
+						case MENU_RESTART:
+						{
+							/* Close victory message. */
+							victory = -1;
+
+							/* Revive players. */
+							for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+								players[i]->dead = false;
+
+							/* Close menu. */
+							menuOpen = false;
+
+							/* Reset player positions. */
+							players[PLAYER_1]->x = tb_width() - PLAYER_START_X;
+							players[PLAYER_2]->x = PLAYER_START_X;
+							players[PLAYER_1]->y = PLAYER_START_Y;
+							players[PLAYER_2]->y = PLAYER_START_Y;
+						}
+					}
+				}
+			}
+
+			/* Update menu. */
+			drawMenu(selectedItem);
+		}
+		else
+			inputPlayers(&ev, players, floor);
 
 		/* Update and draw all players. */
 		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
@@ -60,11 +125,13 @@ int main(int argv, char **argc)
 		{
 			players[PLAYER_1]->dead = true;
 			victory = PLAYER_1;
+			menuOpen = true;
 		}
 		if(checkCollision(players[PLAYER_2], players[PLAYER_1]->bullet))
 		{
 			players[PLAYER_2]->dead = true;
 			victory = PLAYER_2;
+			menuOpen = true;
 		}
 
 		/* Draw to screen. */
@@ -92,7 +159,7 @@ void drawRectangle(int width, int maxWidth, int height, int maxHeight, int backC
 			tb_change_cell(x, y, symbol, symbolColor, backColor);
 }
 
-void input(struct tb_event *ev, Player *(*players), int floor)
+void inputPlayers(struct tb_event *ev, Player *(*players), int floor)
 {
 	if(!players[PLAYER_1]->dead)
 	{
@@ -153,6 +220,25 @@ void input(struct tb_event *ev, Player *(*players), int floor)
 	}
 }
 
+int inputMenu(struct tb_event *ev)
+{
+	switch(ev->key)
+	{
+		case CONTROLS_MENU_DOWN: return MENU_DOWN;
+		case CONTROLS_MENU_UP: return MENU_UP;
+		case CONTROLS_MENU_SELECT: return MENU_SELECT;
+		default: return MENU_NOTHING;
+	}
+}
+
+bool input(struct tb_event *ev)
+{
+	if(ev->key == TOGGLE_MENU)
+		return true;
+
+	return false;
+}
+
 bool checkCollision(Player *player, Bullet *bullet)
 {
 	if(bullet->x >= player->x - (player->size_x / 2.0f) && bullet->x <= player->x + (player->size_x / 2.0f))
@@ -171,16 +257,29 @@ void drawVictory(int victory)
 	int y = 10;
 
 	if(victory == PLAYER_1)
-		drawString("Player 1 ", playerStringLength, x, y);
+		drawString("Player 1 ", TB_BLACK, playerStringLength, x, y, TB_WHITE);
 
 	if(victory == PLAYER_2)
-		drawString("Player 2 ", playerStringLength, x, y);
+		drawString("Player 2 ", TB_BLACK, playerStringLength, x, y, TB_WHITE);
 
-	drawString("won!", 4, x + playerStringLength, y);
+	drawString("won!", TB_BLACK, 4, x + playerStringLength, y, TB_WHITE);
 }
 
-void drawString(char *string, int length, int x, int y)
+void drawString(char *string, int color, int length, int x, int y, int backColor)
 {
 	for(int i = 0; i < length; i++)
-		tb_change_cell(x + i, y, string[i], TB_BLACK, TB_WHITE);
+		tb_change_cell(x + i, y, string[i], color, backColor);
+}
+
+void drawMenu(int selectedItem)
+{
+	if(selectedItem == MENU_EXIT)
+		drawString("Exit", TB_WHITE, 4, tb_width() / 2.0f - 2.0f, 15, TB_BLUE);
+	else
+		drawString("Exit", TB_WHITE, 4, tb_width() / 2.0f - 2.0f, 15, TB_BLACK);
+
+	if(selectedItem == MENU_RESTART)
+		drawString("Restart", TB_WHITE, 7, tb_width() / 2.0f - 7.0f / 2.0f, 17, TB_BLUE);
+	else
+		drawString("Restart", TB_WHITE, 7, tb_width() / 2.0f - 7.0f / 2.0f, 17, TB_BLACK);
 }
