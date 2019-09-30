@@ -22,11 +22,13 @@ int main(int argv, char **argc)
 
 	/* Create obstacles. */
 	Stageobject *stageobjects[NUMBER_OF_STAGE_OBJECTS];
-	stageobjects[0] = Stageobject__create(10, 30, 45, 47, TB_RED);
-	stageobjects[1] = Stageobject__create(50, 70, 45, 47, TB_RED);
-	stageobjects[2] = Stageobject__create(20, 40, 35, 37, TB_RED);
-	stageobjects[3] = Stageobject__create(60, 80, 35, 37, TB_RED);
-	stageobjects[4] = Stageobject__create(70, 90, 25, 27, TB_RED);
+	stageobjects[6] = Stageobject__create(10, 30, 55, 57, TB_RED);
+	stageobjects[5] = Stageobject__create(50, 70, 55, 57, TB_YELLOW);
+	stageobjects[4] = Stageobject__create(10, 30, 45, 47, TB_RED);
+	stageobjects[3] = Stageobject__create(50, 70, 45, 47, TB_BLACK);
+	stageobjects[2] = Stageobject__create(20, 40, 35, 37, TB_WHITE);
+	stageobjects[1] = Stageobject__create(60, 80, 35, 37, TB_BLUE);
+	stageobjects[0] = Stageobject__create(70, 90, 25, 27, TB_RED);
 
 	/* Needed for nanosleep. */
 	struct timespec tim, tim2;
