@@ -20,16 +20,6 @@ int main(int argv, char **argc)
 	players[PLAYER_1] = Player__create(tb_width() - PLAYER_START_X, PLAYER_START_Y, TB_RED);
 	players[PLAYER_2] = Player__create(PLAYER_START_X, PLAYER_START_Y, TB_BLACK);
 
-	/* Create obstacles. */
-	Stageobject *stageobjects[NUMBER_OF_STAGE_OBJECTS];
-	stageobjects[6] = Stageobject__create(10, 30, 55, 57, TB_RED);
-	stageobjects[5] = Stageobject__create(50, 70, 55, 57, TB_YELLOW);
-	stageobjects[4] = Stageobject__create(10, 30, 45, 47, TB_RED);
-	stageobjects[3] = Stageobject__create(50, 70, 45, 47, TB_BLACK);
-	stageobjects[2] = Stageobject__create(20, 40, 35, 37, TB_WHITE);
-	stageobjects[1] = Stageobject__create(60, 80, 35, 37, TB_BLUE);
-	stageobjects[0] = Stageobject__create(70, 90, 25, 27, TB_RED);
-
 	/* Needed for nanosleep. */
 	struct timespec tim, tim2;
 	tim.tv_sec = 0;
@@ -57,9 +47,9 @@ int main(int argv, char **argc)
 		/* Draw ground. */
 		drawRectangle(0, tb_width(), floor, tb_height(), GROUND_COLOR, GROUND_SYMBOL, TB_DEFAULT);
 
-		/* Draw obstacles. */
-		for(int i = 0; i < NUMBER_OF_STAGE_OBJECTS; i++)
-			stageobjects[i]->draw(stageobjects[i]);
+		/* Draw platforms. */
+		for(int i = 0; i < level1.number_of_platforms; i++)
+			Platform__draw(&level1.platforms[i]);
 
 		/* Update and draw all players. */
 		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
@@ -86,18 +76,18 @@ int main(int argv, char **argc)
 		/* Check if players are standing on obstacles. */
 		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
 		{
-			for(int j = 0; j < NUMBER_OF_STAGE_OBJECTS; j++)
+			for(int j = 0; j < level1.number_of_platforms; j++)
 			{
-				if(players[i]->x <= stageobjects[j]->x_r - PLAYER_SIZE_X / 2.0f &&
-				   players[i]->x >= stageobjects[j]->x_l &&
-				   players[i]->y < stageobjects[j]->y_u &&
-				   players[i]->y > stageobjects[j]->y_d - PLAYER_SIZE_Y / 2.0f)
+				if(players[i]->x <= level1.platforms[j].x_r - PLAYER_SIZE_X / 2.0f &&
+				   players[i]->x >= level1.platforms[j].x_l &&
+				   players[i]->y < level1.platforms[j].y_u &&
+				   players[i]->y > level1.platforms[j].y_d - PLAYER_SIZE_Y / 2.0f)
 				{
 					/* Place a player underneath or upon an object depending on their direction of vertical velocity. */
 					if(players[i]->vy >= 0)
-						players[i]->y = stageobjects[j]->y_d - PLAYER_SIZE_Y / 2.0f;
+						players[i]->y = level1.platforms[j].y_d - PLAYER_SIZE_Y / 2.0f;
 					else
-						players[i]->y = stageobjects[j]->y_u;
+						players[i]->y = level1.platforms[j].y_u;
 
 					/* Cancel a player's inertia. */
 					players[i]->vy = 0;

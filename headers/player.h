@@ -54,16 +54,16 @@ void Player__destroy(Player* this);
 
 static const char Player__graphics[3][3] =
 {
-	' ', '0', ' ',
-	'-', '|', '-',
-	'/', ' ', '\\'
+	{ ' ', '0', ' '  },
+	{ '-', '|', '-'	 },
+	{ '/', ' ', '\\' }
 };
 
 static const char Player__graphics_dead[3][3] =
 {
-	'\\', ' ', '/',
-	' ', 'X', ' ',
-	'/', ' ', '\\'
+	{ '\\', ' ', '/' },
+	{ ' ', 'X', ' '  },
+	{'/', ' ', '\\'  }
 };
 
 struct Player
