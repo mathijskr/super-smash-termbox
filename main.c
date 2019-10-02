@@ -55,47 +55,50 @@ int main(int argv, char **argc)
 		for(int i = 0; i < level->number_of_platforms; i++)
 			Platform__draw(&level->platforms[i]);
 
-		/* Update and draw all players. */
-		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+		if(!menu.open)
 		{
-			players[i]->physics(players[i], floor);
-			players[i]->draw(players[i]);
-		}
-
-		/* Check if bullets hit players. */
-		if(checkCollision(players[PLAYER_1], players[PLAYER_2]->bullet))
-		{
-			players[PLAYER_1]->dead = true;
-			victory = PLAYER_1;
-			menu.open = true;
-		}
-
-		if(checkCollision(players[PLAYER_2], players[PLAYER_1]->bullet))
-		{
-			players[PLAYER_2]->dead = true;
-			victory = PLAYER_2;
-			menu.open = true;
-		}
-
-		/* Check if players are standing on obstacles. */
-		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
-		{
-			for(int j = 0; j < level->number_of_platforms; j++)
+			/* Update and draw all players. */
+			for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
 			{
-				if(players[i]->x <= level->platforms[j].x_r - PLAYER_SIZE_X / 2.0f &&
-				   players[i]->x >= level->platforms[j].x_l &&
-				   players[i]->y < level->platforms[j].y_u &&
-				   players[i]->y > level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f)
-				{
-					/* Place a player underneath or upon an object depending on their direction of vertical velocity. */
-					if(players[i]->vy >= 0)
-						players[i]->y = level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f;
-					else
-						players[i]->y = level->platforms[j].y_u;
+				players[i]->physics(players[i], floor);
+				players[i]->draw(players[i]);
+			}
 
-					/* Cancel a player's inertia. */
-					players[i]->vy = 0;
-					players[i]->ay = 0;
+			/* Check if bullets hit players. */
+			if(checkCollision(players[PLAYER_1], players[PLAYER_2]->bullet))
+			{
+				players[PLAYER_1]->dead = true;
+				victory = PLAYER_1;
+				menu.open = true;
+			}
+
+			if(checkCollision(players[PLAYER_2], players[PLAYER_1]->bullet))
+			{
+				players[PLAYER_2]->dead = true;
+				victory = PLAYER_2;
+				menu.open = true;
+			}
+
+			/* Check if players are standing on obstacles. */
+			for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+			{
+				for(int j = 0; j < level->number_of_platforms; j++)
+				{
+					if(players[i]->x <= level->platforms[j].x_r - PLAYER_SIZE_X / 2.0f &&
+					   players[i]->x >= level->platforms[j].x_l &&
+					   players[i]->y < level->platforms[j].y_u &&
+					   players[i]->y > level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f)
+					{
+						/* Place a player underneath or upon an object depending on their direction of vertical velocity. */
+						if(players[i]->vy >= 0)
+							players[i]->y = level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f;
+						else
+							players[i]->y = level->platforms[j].y_u;
+
+						/* Cancel a player's inertia. */
+						players[i]->vy = 0;
+						players[i]->ay = 0;
+					}
 				}
 			}
 		}
