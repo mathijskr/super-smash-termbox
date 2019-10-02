@@ -46,5 +46,5 @@ void drawMenu(int selectedItem, int selectedLevel);
 /* Draw a victory message for the corresponding player that won the game. */
 void drawVictory(int victory);
 
+/* Restart a level by reviving the players and resetting their positions. */
 void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS]);
-

@@ -1,7 +1,19 @@
 #include "headers/menu.h"
 
+void Menu__init(Menu *this)
+{
+	this->open = false;
+	this->shouldExit = false;
+	this->action = -1;
+	this->selectedItem = MENU_EXIT;
+	this->selectedLevel = 0;
+	this->y = 15;
+}
+
 void Menu__draw(Menu *this, void (*drawString)(char *string, int color, int length, int x, int y, int backColor))
 {
+	/* Draw a UI element in the selection color if the element is selected. Draw it with the normal color if it's not selected. */
+
 	if(this->selectedItem == MENU_EXIT)
 		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y, MENU_ITEM_COLOR_SELECTED);
 	else
@@ -25,6 +37,7 @@ void Menu__moveMenuCursor(Menu *this)
 		case MENU_UP:
 		{
 			if(this->selectedItem == MENU_SELECT_LEVEL)
+				/* Go to the first UI element. */
 				this->selectedItem = MENU_EXIT;
 			else
 				this->selectedItem++;
@@ -34,22 +47,13 @@ void Menu__moveMenuCursor(Menu *this)
 		case MENU_DOWN:
 		{
 			if(this->selectedItem == MENU_EXIT)
+				/* Go to the last UI element. */
 				this->selectedItem = MENU_SELECT_LEVEL;
 			else
 				this->selectedItem--;
 			break;
 		}
 	}
-}
-
-void Menu__init(Menu *this)
-{
-	this->open = false;
-	this->shouldExit = false;
-	this->action = -1;
-	this->selectedItem = MENU_EXIT;
-	this->selectedLevel = 0;
-	this->y = 15;
 }
 
 void Menu__input(Menu *this, struct tb_event *ev)

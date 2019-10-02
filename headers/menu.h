@@ -22,10 +22,19 @@
 
 typedef struct Menu Menu;
 
+/* Draw all UI elements from the menu using a draw method provided by drawString. */
 void Menu__draw(Menu *this, void (*drawString)(char *string, int color, int length, int x, int y, int backColor));
+
+/* Move the selection up or down. */
 void Menu__moveMenuCursor(Menu *this);
+
+/* Initialize the menu with default values. */
 void Menu__init(Menu *this);
+
+/* Handle input from a player using the menu. */
 void Menu__input(Menu *this, struct tb_event *ev);
+
+/* Update the menu depending on the input processed by de Menu__input method. */
 void Menu__update(Menu *this);
 
 struct Menu
