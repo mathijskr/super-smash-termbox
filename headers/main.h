@@ -27,6 +27,7 @@
 #define MENU_SELECT 2
 #define MENU_EXIT 3
 #define MENU_RESTART 4
+#define MENU_SELECT_LEVEL 5
 
 /* Draw a rectangle of size widht, heigth with that has color color and fill it with symbol symbol. */
 void drawRectangle(int width, int maxWidth, int height, int maxHeight, int backColor, char symbol, int symbolColor);
@@ -49,10 +50,12 @@ bool checkCollision(Player *player, Bullet *bullet);
 void drawString(char *string, int color, int length, int x, int y, int backColor);
 
 /* Move the cursor in the menu up or down so that a different action is selected. */
-int moveMenuCursor(int menuAction, int selectedItem);
+int moveMenuCursor(int menuAction, int selectedItem, int selectedLevel);
 
 /* Draw a UI for the menu. */
-void drawMenu(int selectedItem);
+void drawMenu(int selectedItem, int selectedLevel);
 
 /* Draw a victory message for the corresponding player that won the game. */
 void drawVictory(int victory);
+
+void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen);

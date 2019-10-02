@@ -25,4 +25,16 @@ Level level1 =
 	}
 };
 
+Level level2 =
+{
+	5,
+	{
+		{ 10, 30, 45, 47, TB_YELLOW},
+		{ 70, 90, 45, 47, TB_WHITE},
+		{ 35, 45, 35, 37, TB_RED},
+		{ 55, 65, 35, 37, TB_BLUE},
+		{ 45, 55, 25, 27, TB_BLACK},
+	}
+};
+
 #endif

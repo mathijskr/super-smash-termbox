@@ -34,6 +34,10 @@ int main(int argv, char **argc)
 
 	int selectedItem = MENU_EXIT;
 
+	int selectedLevel = 0;
+	Level *levels[] = { &level1, &level2 };
+	Level *level;
+
 	/* Quit loop if player presses escape key. */
 	while(!exitGame)
 	{
@@ -47,9 +51,11 @@ int main(int argv, char **argc)
 		/* Draw ground. */
 		drawRectangle(0, tb_width(), floor, tb_height(), GROUND_COLOR, GROUND_SYMBOL, TB_DEFAULT);
 
+		level = levels[selectedLevel];
+
 		/* Draw platforms. */
-		for(int i = 0; i < level1.number_of_platforms; i++)
-			Platform__draw(&level1.platforms[i]);
+		for(int i = 0; i < level->number_of_platforms; i++)
+			Platform__draw(&level->platforms[i]);
 
 		/* Update and draw all players. */
 		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
@@ -76,18 +82,18 @@ int main(int argv, char **argc)
 		/* Check if players are standing on obstacles. */
 		for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
 		{
-			for(int j = 0; j < level1.number_of_platforms; j++)
+			for(int j = 0; j < level->number_of_platforms; j++)
 			{
-				if(players[i]->x <= level1.platforms[j].x_r - PLAYER_SIZE_X / 2.0f &&
-				   players[i]->x >= level1.platforms[j].x_l &&
-				   players[i]->y < level1.platforms[j].y_u &&
-				   players[i]->y > level1.platforms[j].y_d - PLAYER_SIZE_Y / 2.0f)
+				if(players[i]->x <= level->platforms[j].x_r - PLAYER_SIZE_X / 2.0f &&
+				   players[i]->x >= level->platforms[j].x_l &&
+				   players[i]->y < level->platforms[j].y_u &&
+				   players[i]->y > level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f)
 				{
 					/* Place a player underneath or upon an object depending on their direction of vertical velocity. */
 					if(players[i]->vy >= 0)
-						players[i]->y = level1.platforms[j].y_d - PLAYER_SIZE_Y / 2.0f;
+						players[i]->y = level->platforms[j].y_d - PLAYER_SIZE_Y / 2.0f;
 					else
-						players[i]->y = level1.platforms[j].y_u;
+						players[i]->y = level->platforms[j].y_u;
 
 					/* Cancel a player's inertia. */
 					players[i]->vy = 0;
@@ -108,7 +114,7 @@ int main(int argv, char **argc)
 		if(menuOpen)
 		{
 			menuAction = inputMenu(&ev);
-			selectedItem = moveMenuCursor(menuAction, selectedItem);
+			selectedItem = moveMenuCursor(menuAction, selectedItem, selectedLevel);
 
 			if(menuAction == MENU_SELECT)
 			{
@@ -117,27 +123,26 @@ int main(int argv, char **argc)
 					case MENU_EXIT: exitGame = true; break;
 					case MENU_RESTART:
 					{
-						/* Close victory message. */
-						victory = -1;
+						restart(&victory, &players, &menuOpen);
 
-						/* Revive players. */
-						for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
-							players[i]->dead = false;
+						break;
+					}
+					case MENU_SELECT_LEVEL:
+					{
+						if(selectedLevel == 0)
+							selectedLevel = 1;
+						else
+							selectedLevel = 0;
 
-						/* Close menu. */
-						menuOpen = false;
+						restart(&victory, &players, &menuOpen);
 
-						/* Reset player positions. */
-						players[PLAYER_1]->x = tb_width() - PLAYER_START_X;
-						players[PLAYER_2]->x = PLAYER_START_X;
-						players[PLAYER_1]->y = PLAYER_START_Y;
-						players[PLAYER_2]->y = PLAYER_START_Y;
+						break;
 					}
 				}
 			}
 
 			/* Update menu. */
-			drawMenu(selectedItem);
+			drawMenu(selectedItem, selectedLevel);
 		}
 		else
 			inputPlayers(&ev, players, floor);
@@ -272,13 +277,13 @@ void drawString(char *string, int color, int length, int x, int y, int backColor
 		tb_change_cell(x + i, y, string[i], color, backColor);
 }
 
-int moveMenuCursor(int menuAction, int selectedItem)
+int moveMenuCursor(int menuAction, int selectedItem, int selectedLevel)
 {
 	switch(menuAction)
 	{
 		case MENU_UP:
 		{
-			if(selectedItem == MENU_RESTART)
+			if(selectedItem == MENU_SELECT_LEVEL)
 				selectedItem = MENU_EXIT;
 			else
 				selectedItem++;
@@ -288,7 +293,7 @@ int moveMenuCursor(int menuAction, int selectedItem)
 		case MENU_DOWN:
 		{
 			if(selectedItem == MENU_EXIT)
-				selectedItem = MENU_RESTART;
+				selectedItem = MENU_SELECT_LEVEL;
 			else
 				selectedItem--;
 			break;
@@ -298,15 +303,39 @@ int moveMenuCursor(int menuAction, int selectedItem)
 	return selectedItem;
 }
 
-void drawMenu(int selectedItem)
+void drawMenu(int selectedItem, int selectedLevel)
 {
 	if(selectedItem == MENU_EXIT)
-		drawString("Exit", TB_WHITE, 4, tb_width() / 2.0f - 2.0f, 15, TB_BLUE);
+		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLUE);
 	else
-		drawString("Exit", TB_WHITE, 4, tb_width() / 2.0f - 2.0f, 15, TB_BLACK);
+		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLACK);
 
 	if(selectedItem == MENU_RESTART)
-		drawString("Restart", TB_WHITE, 7, tb_width() / 2.0f - 7.0f / 2.0f, 17, TB_BLUE);
+		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLUE);
 	else
-		drawString("Restart", TB_WHITE, 7, tb_width() / 2.0f - 7.0f / 2.0f, 17, TB_BLACK);
+		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLACK);
+
+	if(selectedItem == MENU_SELECT_LEVEL)
+		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLUE);
+	else
+		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLACK);
+}
+
+void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen)
+{
+	/* Close victory message. */
+	*victory = -1;
+
+	/* Revive players. */
+	for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+		(*players)[i]->dead = false;
+
+	/* Close menu. */
+	*menuOpen = false;
+
+	/* Reset player positions. */
+	(*players)[PLAYER_1]->x = tb_width() - PLAYER_START_X;
+	(*players)[PLAYER_2]->x = PLAYER_START_X;
+	(*players)[PLAYER_1]->y = PLAYER_START_Y;
+	(*players)[PLAYER_2]->y = PLAYER_START_Y;
 }
