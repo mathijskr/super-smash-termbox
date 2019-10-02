@@ -1,6 +1,11 @@
 #ifndef MENU_H_
 #define MENU_H_
 
+#define TOGGLE_MENU TB_KEY_ESC
+#define CONTROLS_MENU_DOWN TB_KEY_ARROW_DOWN
+#define CONTROLS_MENU_UP TB_KEY_ARROW_UP
+#define CONTROLS_MENU_SELECT TB_KEY_ENTER
+
 #define MENU_NOTHING -1
 #define MENU_DOWN 0
 #define MENU_UP 1
@@ -9,20 +14,29 @@
 #define MENU_RESTART 4
 #define MENU_SELECT_LEVEL 5
 
+#define MENU_ITEM_COLOR TB_BLACK
+#define MENU_ITEM_COLOR_SELECTED TB_BLUE
+
 #include <stdbool.h>
 #include "termbox.h"
 
 typedef struct Menu Menu;
 
-void Menu__draw(void (*drawString)(char *string, int color, int length, int x, int y, int backColor), int selectedItem, int selectedLevel);
-int Menu__moveMenuCursor(int menuAction, int selectedItem, int selectedLevel);
-void Menu__init(Menu *menu);
+void Menu__draw(Menu *this, void (*drawString)(char *string, int color, int length, int x, int y, int backColor));
+void Menu__moveMenuCursor(Menu *this);
+void Menu__init(Menu *this);
+void Menu__input(Menu *this, struct tb_event *ev);
+void Menu__update(Menu *this);
 
 struct Menu
 {
 	bool open;
+	bool shouldExit;
+	bool shouldRestart;
 	int action;
 	int selectedItem;
+	int selectedLevel;
+	int y;
 };
 
 #endif

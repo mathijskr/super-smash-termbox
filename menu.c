@@ -1,52 +1,97 @@
 #include "headers/menu.h"
 
-void Menu__draw(void (*drawString)(char *string, int color, int length, int x, int y, int backColor), int selectedItem, int selectedLevel)
+void Menu__draw(Menu *this, void (*drawString)(char *string, int color, int length, int x, int y, int backColor))
 {
-	if(selectedItem == MENU_EXIT)
-		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLUE);
+	if(this->selectedItem == MENU_EXIT)
+		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y, MENU_ITEM_COLOR_SELECTED);
 	else
-		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLACK);
+		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y, MENU_ITEM_COLOR);
 
-	if(selectedItem == MENU_RESTART)
-		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLUE);
+	if(this->selectedItem == MENU_RESTART)
+		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y - 2, MENU_ITEM_COLOR_SELECTED);
 	else
-		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLACK);
+		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y - 2, MENU_ITEM_COLOR);
 
-	if(selectedItem == MENU_SELECT_LEVEL)
-		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLUE);
+	if(this->selectedItem == MENU_SELECT_LEVEL)
+		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y - 4, MENU_ITEM_COLOR_SELECTED);
 	else
-		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLACK);
+		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, this->y - 4, MENU_ITEM_COLOR);
 }
 
-int Menu__moveMenuCursor(int menuAction, int selectedItem, int selectedLevel)
+void Menu__moveMenuCursor(Menu *this)
 {
-	switch(menuAction)
+	switch(this->action)
 	{
 		case MENU_UP:
 		{
-			if(selectedItem == MENU_SELECT_LEVEL)
-				selectedItem = MENU_EXIT;
+			if(this->selectedItem == MENU_SELECT_LEVEL)
+				this->selectedItem = MENU_EXIT;
 			else
-				selectedItem++;
+				this->selectedItem++;
 			break;
 		}
 
 		case MENU_DOWN:
 		{
-			if(selectedItem == MENU_EXIT)
-				selectedItem = MENU_SELECT_LEVEL;
+			if(this->selectedItem == MENU_EXIT)
+				this->selectedItem = MENU_SELECT_LEVEL;
 			else
-				selectedItem--;
+				this->selectedItem--;
 			break;
 		}
 	}
-
-	return selectedItem;
 }
 
-void Menu__init(Menu *menu)
+void Menu__init(Menu *this)
 {
-	menu->open = false;
-	menu->action = -1;
-	menu->selectedItem = MENU_EXIT;
+	this->open = false;
+	this->shouldExit = false;
+	this->action = -1;
+	this->selectedItem = MENU_EXIT;
+	this->selectedLevel = 0;
+	this->y = 15;
+}
+
+void Menu__input(Menu *this, struct tb_event *ev)
+{
+	switch(ev->key)
+	{
+		case CONTROLS_MENU_DOWN: this->action = MENU_DOWN; break;
+		case CONTROLS_MENU_UP: this->action = MENU_UP; break;
+		case CONTROLS_MENU_SELECT: this->action = MENU_SELECT; break;
+		default: this->action = MENU_NOTHING; break;
+	}
+}
+
+void Menu__update(Menu *this)
+{
+	Menu__moveMenuCursor(this);
+
+	if(this->action == MENU_SELECT)
+	{
+		switch(this->selectedItem)
+		{
+			case MENU_EXIT: this->shouldExit = true; break;
+			case MENU_RESTART:
+			{
+				this->shouldRestart = true;
+				this->open = false;
+
+				break;
+			}
+			case MENU_SELECT_LEVEL:
+			{
+				if(this->selectedLevel == 0)
+					this->selectedLevel = 1;
+				else
+					this->selectedLevel = 0;
+
+				this->shouldRestart = true;
+				this->open = false;
+
+				break;
+			}
+		}
+	}
+
 }

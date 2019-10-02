@@ -17,11 +17,6 @@
 #define BACKGROUND_SYMBOL ' '
 #define GROUND_SYMBOL '-'
 
-#define TOGGLE_MENU TB_KEY_ESC
-#define CONTROLS_MENU_DOWN TB_KEY_ARROW_DOWN
-#define CONTROLS_MENU_UP TB_KEY_ARROW_UP
-#define CONTROLS_MENU_SELECT TB_KEY_ENTER
-
 /* Draw a rectangle of size widht, heigth with that has color color and fill it with symbol symbol. */
 void drawRectangle(int width, int maxWidth, int height, int maxHeight, int backColor, char symbol, int symbolColor);
 
@@ -51,4 +46,5 @@ void drawMenu(int selectedItem, int selectedLevel);
 /* Draw a victory message for the corresponding player that won the game. */
 void drawVictory(int victory);
 
-void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen);
+void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS]);
+

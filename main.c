@@ -33,14 +33,11 @@ int main(int argv, char **argc)
 
 	int victory = -1;
 
-	bool exitGame = false;
-
-	int selectedLevel = 0;
 	Level *levels[] = { &level1, &level2 };
 	Level *level;
 
 	/* Quit loop if player presses escape key. */
-	while(!exitGame)
+	while(!menu.shouldExit)
 	{
 		tb_clear();
 
@@ -52,7 +49,7 @@ int main(int argv, char **argc)
 		/* Draw ground. */
 		drawRectangle(0, tb_width(), floor, tb_height(), GROUND_COLOR, GROUND_SYMBOL, TB_DEFAULT);
 
-		level = levels[selectedLevel];
+		level = levels[menu.selectedLevel];
 
 		/* Draw platforms. */
 		for(int i = 0; i < level->number_of_platforms; i++)
@@ -114,38 +111,15 @@ int main(int argv, char **argc)
 
 		if(menu.open)
 		{
-			menu.action = inputMenu(&ev);
-			menu.selectedItem = Menu__moveMenuCursor(menu.action, menu.selectedItem, selectedLevel);
+			Menu__input(&menu, &ev);
+			Menu__update(&menu);
 
-			if(menu.action == MENU_SELECT)
-			{
-				switch(menu.selectedItem)
-				{
-					case MENU_EXIT: exitGame = true; break;
-					case MENU_RESTART:
-					{
-						restart(&victory, &players, &menu.open);
-
-						break;
-					}
-					case MENU_SELECT_LEVEL:
-					{
-						if(selectedLevel == 0)
-							selectedLevel = 1;
-						else
-							selectedLevel = 0;
-
-						restart(&victory, &players, &menu.open);
-
-						break;
-					}
-				}
-			}
+			if(menu.shouldRestart)
+				restart(&victory, &players);
 
 			/* Draw menu. */
-			Menu__draw(drawString, menu.selectedItem, selectedLevel);
-		}
-		else
+			Menu__draw(&menu, drawString);
+		} else
 			inputPlayers(&ev, players, floor);
 
 		/* Draw to screen. */
@@ -227,17 +201,6 @@ void inputPlayers(struct tb_event *ev, Player *(*players), int floor)
 	}
 }
 
-int inputMenu(struct tb_event *ev)
-{
-	switch(ev->key)
-	{
-		case CONTROLS_MENU_DOWN: return MENU_DOWN;
-		case CONTROLS_MENU_UP: return MENU_UP;
-		case CONTROLS_MENU_SELECT: return MENU_SELECT;
-		default: return MENU_NOTHING;
-	}
-}
-
 bool input(struct tb_event *ev)
 {
 	if(ev->key == TOGGLE_MENU)
@@ -278,7 +241,7 @@ void drawString(char *string, int color, int length, int x, int y, int backColor
 		tb_change_cell(x + i, y, string[i], color, backColor);
 }
 
-void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen)
+void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS])
 {
 	/* Close victory message. */
 	*victory = -1;
@@ -286,9 +249,6 @@ void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen
 	/* Revive players. */
 	for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
 		(*players)[i]->dead = false;
-
-	/* Close menu. */
-	*menuOpen = false;
 
 	/* Reset player positions. */
 	(*players)[PLAYER_1]->x = tb_width() - PLAYER_START_X;
