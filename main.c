@@ -15,6 +15,10 @@ int main(int argv, char **argc)
 	tb_select_output_mode(TB_OUTPUT_NORMAL);
 	tb_clear();
 
+	/* Create a new menu. */
+	Menu menu;
+	Menu__init(&menu);
+
 	/* Create new players. */
 	Player *players[NUMBER_OF_PLAYERS];
 	players[PLAYER_1] = Player__create(tb_width() - PLAYER_START_X, PLAYER_START_Y, TB_RED);
@@ -30,9 +34,6 @@ int main(int argv, char **argc)
 	int victory = -1;
 
 	bool exitGame = false;
-	bool menuOpen = false;
-
-	int selectedItem = MENU_EXIT;
 
 	int selectedLevel = 0;
 	Level *levels[] = { &level1, &level2 };
@@ -69,14 +70,14 @@ int main(int argv, char **argc)
 		{
 			players[PLAYER_1]->dead = true;
 			victory = PLAYER_1;
-			menuOpen = true;
+			menu.open = true;
 		}
 
 		if(checkCollision(players[PLAYER_2], players[PLAYER_1]->bullet))
 		{
 			players[PLAYER_2]->dead = true;
 			victory = PLAYER_2;
-			menuOpen = true;
+			menu.open = true;
 		}
 
 		/* Check if players are standing on obstacles. */
@@ -107,23 +108,23 @@ int main(int argv, char **argc)
 
 		/* Handle input. */
 		if(input(&ev))
-			menuOpen = !menuOpen;
+			menu.open = !menu.open;
 
-		int menuAction = -1;
+		menu.action = -1;
 
-		if(menuOpen)
+		if(menu.open)
 		{
-			menuAction = inputMenu(&ev);
-			selectedItem = moveMenuCursor(menuAction, selectedItem, selectedLevel);
+			menu.action = inputMenu(&ev);
+			menu.selectedItem = Menu__moveMenuCursor(menu.action, menu.selectedItem, selectedLevel);
 
-			if(menuAction == MENU_SELECT)
+			if(menu.action == MENU_SELECT)
 			{
-				switch(selectedItem)
+				switch(menu.selectedItem)
 				{
 					case MENU_EXIT: exitGame = true; break;
 					case MENU_RESTART:
 					{
-						restart(&victory, &players, &menuOpen);
+						restart(&victory, &players, &menu.open);
 
 						break;
 					}
@@ -134,15 +135,15 @@ int main(int argv, char **argc)
 						else
 							selectedLevel = 0;
 
-						restart(&victory, &players, &menuOpen);
+						restart(&victory, &players, &menu.open);
 
 						break;
 					}
 				}
 			}
 
-			/* Update menu. */
-			drawMenu(selectedItem, selectedLevel);
+			/* Draw menu. */
+			Menu__draw(drawString, menu.selectedItem, selectedLevel);
 		}
 		else
 			inputPlayers(&ev, players, floor);
@@ -275,50 +276,6 @@ void drawString(char *string, int color, int length, int x, int y, int backColor
 {
 	for(int i = 0; i < length; i++)
 		tb_change_cell(x + i, y, string[i], color, backColor);
-}
-
-int moveMenuCursor(int menuAction, int selectedItem, int selectedLevel)
-{
-	switch(menuAction)
-	{
-		case MENU_UP:
-		{
-			if(selectedItem == MENU_SELECT_LEVEL)
-				selectedItem = MENU_EXIT;
-			else
-				selectedItem++;
-			break;
-		}
-
-		case MENU_DOWN:
-		{
-			if(selectedItem == MENU_EXIT)
-				selectedItem = MENU_SELECT_LEVEL;
-			else
-				selectedItem--;
-			break;
-		}
-	}
-
-	return selectedItem;
-}
-
-void drawMenu(int selectedItem, int selectedLevel)
-{
-	if(selectedItem == MENU_EXIT)
-		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLUE);
-	else
-		drawString("Exit          ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 19, TB_BLACK);
-
-	if(selectedItem == MENU_RESTART)
-		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLUE);
-	else
-		drawString("Restart       ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 17, TB_BLACK);
-
-	if(selectedItem == MENU_SELECT_LEVEL)
-		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLUE);
-	else
-		drawString("Switch Level  ", TB_WHITE, 14, tb_width() / 2.0f - 7.0f, 15, TB_BLACK);
 }
 
 void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS], bool *menuOpen)
