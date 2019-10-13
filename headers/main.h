@@ -1,3 +1,6 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -48,3 +51,5 @@ void drawVictory(int victory);
 
 /* Restart a level by reviving the players and resetting their positions. */
 void restart(int *victory, Player *(*players)[NUMBER_OF_PLAYERS]);
+
+#endif
