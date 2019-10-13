@@ -10,3 +10,8 @@ A very simple 1 vs 1 game in the terminal using termbox.
 ## How to play:
 1. cd super-smash-termbox
 2. make run
+
+## Dependencies:
+* tcc, the tiny c compiler. You can also use gcc, you only have to change tcc to gcc in the Makefile.
+* make
+* termbox
