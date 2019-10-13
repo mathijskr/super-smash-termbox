@@ -4,7 +4,9 @@
 #include <stdbool.h>
 #include "termbox.h"
 
-enum CONTROLS { TOGGLE_MENU = TB_KEY_ESC, DOWN_KEY = TB_KEY_ARROW_DOWN, UP_KEY = TB_KEY_ARROW_UP, SELECT_KEY = TB_KEY_ENTER };
+enum CONTROLS { TOGGLE_MENU = TB_KEY_ESC, DOWN_KEY = TB_KEY_ARROW_DOWN,
+		UP_KEY = TB_KEY_ARROW_UP, SELECT_KEY = TB_KEY_ENTER };
+
 enum MENU_ITEM { EXIT, RESTART, SWITCH_LEVEL };
 enum MENU_ACTION { DOWN, UP, SELECT, NOTHING };
 
@@ -13,7 +15,8 @@ enum COLOR { ITEM = TB_BLACK, ITEM_SELECTED = TB_BLUE };
 typedef struct Menu Menu;
 
 /* Draw all UI elements from the menu using a draw method provided by drawString. */
-void Menu__draw(Menu *this, void (*drawString)(char *string, int color, int length, int x, int y, int backColor));
+void Menu__draw(Menu *this, void (*drawString)(char *string, int color,
+		int length, int x, int y, int backColor));
 
 /* Move the selection up or down. */
 void Menu__moveMenuCursor(Menu *this);
