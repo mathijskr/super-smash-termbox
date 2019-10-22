@@ -2,7 +2,10 @@
 A very simple 1 vs 1 game in the terminal using termbox.
 
 ## How to install:
-1. Install termbox development files. (For Void Linux: xbps-install termbox-devel) 
+1. Install termbox development files: 
+* Void Linux: xbps-install termbox-devel
+* Debian based distros: apt install libtermbox-dev 
+* Arch based distros: There is no package for termbox yet on Arch based distros, so you have to build termbox yourself.
 2. git clone https://github.com/mathijskr/super-smash-termbox
 3. cd super-smash-termbox
 4. make
