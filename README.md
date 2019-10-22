@@ -2,7 +2,7 @@
 A very simple 1 vs 1 game in the terminal using termbox.
 
 ## How to install:
-1. git clone https://github.com/nsf/termbox
+1. Install termbox development files. (For Void Linux: xbps-install termbox-devel) 
 2. git clone https://github.com/mathijskr/super-smash-termbox
 3. cd super-smash-termbox
 4. make
@@ -13,5 +13,5 @@ A very simple 1 vs 1 game in the terminal using termbox.
 
 ## Dependencies:
 * tcc, the tiny c compiler. You can also use gcc, you only have to change tcc to gcc in the Makefile.
-* make
-* termbox
+* GNU Make.
+* Termbox development files.

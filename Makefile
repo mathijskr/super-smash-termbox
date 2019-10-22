@@ -1,10 +1,11 @@
 CC=tcc
-IN=main.c player.c bullet.c platform.c menu.c ../termbox/src/termbox.c ../termbox/src/utf8.c
+IN=main.c player.c bullet.c platform.c menu.c
+LIBS=-ltermbox
 OUT=main
-INCLUDE=-I ../termbox/src/ -I headers/
+INCLUDE=-I headers/
 
 make:
-	$(CC) $(INCLUDE) $(IN) -o $(OUT)
+	$(CC) $(INCLUDE) $(LIBS) $(IN) -o $(OUT)
 
 .Phony: run
 
